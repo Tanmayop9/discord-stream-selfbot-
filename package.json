@@ -43,7 +43,9 @@
     "scripts": {
         "build": "tsc",
         "lint": "biome lint --error-on-warnings .",
-        "lint:fix": "biome lint --write ."
+        "lint:fix": "biome lint --write .",
+        "test": "npm run build && node tests/test-youtube.js",
+        "prepublishOnly": "npm run build"
     },
     "keywords": [
         "discord",
