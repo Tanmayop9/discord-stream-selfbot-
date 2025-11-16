@@ -1,0 +1,16 @@
+{
+  "name": "youtube-example",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "discord.js-selfbot-v13": "^3.6.0",
+    "discord-stream-selfbot-yt": "file:../../"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
