@@ -11,9 +11,12 @@ This project extends the [Discord-video-stream](https://github.com/Discord-RE/Di
 
 - 🎥 Play video & audio in Discord voice channels (Go Live or webcam video)
 - 🎬 **YouTube URL Support** - Stream YouTube videos directly using their URLs
+- 🔄 **Auto-Retry** - Automatic retry on YouTube extraction failures (configurable, default 3 attempts)
+- 🛡️ **Robust Error Handling** - Comprehensive error messages and fallback mechanisms
 - 🔧 Supports H.264, H.265, and VP8 video codecs
 - ⚙️ Customizable video quality, bitrate, and encoding settings
 - 📺 Both direct video URLs and YouTube URLs supported
+- 🎯 **Advanced Example** - Ultra-advanced single-file bot with queue system, status monitoring, and more
 
 ## 📋 Requirements
 
@@ -49,7 +52,7 @@ await streamer.client.login('YOUR_TOKEN_HERE');
 await streamer.joinVoice("GUILD_ID", "CHANNEL_ID");
 ```
 
-### Stream YouTube Videos
+### Stream YouTube Videos with Advanced Options
 
 ```typescript
 import { prepareStream, playStream, Utils } from "discord-stream-selfbot-yt";
@@ -64,7 +67,16 @@ try {
         bitrateVideo: 5000,
         bitrateVideoMax: 7500,
         videoCodec: Utils.normalizeVideoCodec("H264"),
-        h26xPreset: "veryfast"
+        h26xPreset: "veryfast",
+        verbose: true, // Enable detailed logging
+        
+        // YouTube-specific options
+        youtubeOptions: {
+            maxRetries: 3,      // Retry failed extractions (default: 3)
+            retryDelay: 2000,   // Delay between retries in ms (default: 1000)
+            quality: 'highest', // Video quality (highest, lowest, etc.)
+            preferFormat: 'any' // Format preference (any, mp4, webm)
+        }
     });
     
     command.on("error", (err, stdout, stderr) => {
@@ -101,10 +113,11 @@ await playStream(output, streamer, { type: "go-live" });
 
 ## ⚙️ Configuration Options
 
-### Encoder Options
+### Enhanced Prepare Stream Options
 
 ```typescript
 {
+    // Standard encoding options
     width?: number;              // Video output width
     height?: number;             // Video output height
     frameRate?: number;          // Video output FPS
@@ -118,8 +131,28 @@ await playStream(output, streamer, { type: "go-live" });
     minimizeLatency?: boolean;   // Minimize latency
     customHeaders?: Record<string, string>;  // Custom HTTP headers
     customFfmpegFlags?: string[];  // Custom FFmpeg flags
+    
+    // Enhanced options
+    verbose?: boolean;           // Enable detailed logging
+    
+    // YouTube-specific options
+    youtubeOptions?: {
+        maxRetries?: number;     // Max retry attempts (default: 3)
+        retryDelay?: number;     // Delay between retries in ms (default: 1000)
+        quality?: 'highest' | 'lowest' | 'highestaudio' | 'lowestaudio' | 'highestvideo' | 'lowestvideo';
+        preferFormat?: 'any' | 'mp4' | 'webm';  // Preferred format
+    }
 }
 ```
+
+### YouTube Options Details
+
+The `youtubeOptions` provides robust YouTube extraction:
+
+- **`maxRetries`**: Number of retry attempts if extraction fails (default: 3)
+- **`retryDelay`**: Milliseconds to wait between retries (default: 1000)
+- **`quality`**: Preferred quality level for the stream
+- **`preferFormat`**: Container format preference (mp4, webm, or any)
 
 ### Play Stream Options
 
@@ -175,7 +208,9 @@ if (isYouTubeUrl(url)) {
 }
 ```
 
-## 🎯 Running the Example
+## 🎯 Running the Examples
+
+### Basic Example
 
 1. Navigate to `examples/youtube-example`
 2. Configure `src/config.json`:
@@ -192,6 +227,51 @@ if (isYouTubeUrl(url)) {
    - `$play-live <YouTube URL or direct video URL>`
    - `$play-cam <YouTube URL or direct video URL>`
    - `$disconnect`
+
+### Ultra Advanced Example 🔥
+
+For a production-ready bot with advanced features, check out `examples/ultra-advanced-bot.ts`!
+
+**Features:**
+- ✅ **Queue System** - Add multiple videos to queue
+- ✅ **Auto-Retry** - Automatic retry on YouTube extraction failures  
+- ✅ **Status Monitoring** - Real-time stream status and statistics
+- ✅ **Error Recovery** - Comprehensive error handling and recovery
+- ✅ **Rich Commands** - Full command system ($play, $queue, $skip, $status, etc.)
+- ✅ **Detailed Logging** - Verbose logging with timestamps and status
+- ✅ **Graceful Shutdown** - Proper cleanup on exit
+
+**Commands Available:**
+```
+$play <url>         - Play video in current voice channel
+$play-live <url>    - Play as Go Live stream
+$play-cam <url>     - Play as camera stream
+$queue <url>        - Add video to queue
+$skip               - Skip current video
+$stop               - Stop playback and clear queue
+$queue-list         - Show current queue
+$queue-clear        - Clear the queue
+$disconnect         - Leave voice channel
+$status             - Show stream status
+$help               - Show help message
+```
+
+**Quick Start:**
+```bash
+# Copy the ultra-advanced example
+cp examples/ultra-advanced-bot.ts my-bot.ts
+
+# Edit configuration at the top of the file
+# Set your token and user IDs
+
+# Install dependencies
+npm install
+
+# Run directly with ts-node or compile first
+npx ts-node my-bot.ts
+# OR
+npx tsc my-bot.ts && node my-bot.js
+```
 
 ## ⚠️ Important Notes
 
